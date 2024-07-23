@@ -1,0 +1,5 @@
+node_modules
+account.js
+log/*
+.DS_Store
+package-lock.json

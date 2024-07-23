@@ -1,0 +1,20 @@
+{
+  "name": "lake-tx-bot",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bip39": "^3.1.0",
+    "ethers": "^6.13.1",
+    "twisters": "^1.1.0",
+    "winston": "^3.13.0"
+  }
+}
