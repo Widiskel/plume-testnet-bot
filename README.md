@@ -6,6 +6,7 @@ PLUM TESTNET TX bot for adding more tx on chain
 
 - Auto Claim Faucet (if faucet not received for long time, it mean faucet limit reached)
 - Auto Check In
+- Auto Swap ?? (coming soon)
 
 ## PREREQUISITE
 
