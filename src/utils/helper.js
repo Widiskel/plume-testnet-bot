@@ -68,6 +68,14 @@ export class Helper {
     return list_useragent[Math.floor(Math.random() * list_useragent.length)];
   }
 
+  static serializeBigInt = (obj) => {
+    return JSON.parse(
+      JSON.stringify(obj, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+  };
+
   static isMnemonic(input) {
     return bip39.validateMnemonic(input);
   }

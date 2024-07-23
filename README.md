@@ -5,6 +5,7 @@ PLUM TESTNET TX bot for adding more tx on chain
 ## BOT FEATURE
 
 - Auto Claim Faucet
+- Auto Check In
 
 ## PREREQUISITE
 

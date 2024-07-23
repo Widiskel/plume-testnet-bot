@@ -12,6 +12,9 @@ async function operation(acc) {
     await plume.getBalance();
     await plume.getFaucet("ETH");
     await plume.getFaucet("GOON");
+
+    await plume.connectDappPlume();
+    await plume.checkIn();
   } catch (error) {
     if (currentError != maxError) {
       currentError += 1;
@@ -49,9 +52,9 @@ async function process() {
   twist.clear();
   twist.cleanInfo();
   await Helper.delay(
-    1000 * 3600 * 24,
+    60000 * 10,
     undefined,
-    "All Account processed Delaying for 1 day"
+    "All Account processed Delaying for 10 Minutes"
   );
   twist.cleanInfo();
   await process();
