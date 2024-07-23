@@ -202,8 +202,6 @@ Issued At: 2024-07-23T05:42:33.571Z`;
           gasPrice: feeData.gasPrice,
         };
 
-        logger.info(`TX ${JSON.stringify(Helper.serializeBigInt(tx))}`);
-
         await this.executeTx(tx);
       }
     } catch (error) {
@@ -214,7 +212,7 @@ Issued At: 2024-07-23T05:42:33.571Z`;
   async executeTx(tx) {
     try {
       await Helper.delay(500, this.acc, `Building Tx...`, this);
-      logger.info(JSON.stringify(Helper.serializeBigInt(tx)));
+      logger.info(`TX : ${JSON.stringify(Helper.serializeBigInt(tx))}`);
       const txRes = await this.wallet.sendTransaction(tx);
       await Helper.delay(500, this.acc, `Transaction Sended ...`, this);
       await Helper.delay(
