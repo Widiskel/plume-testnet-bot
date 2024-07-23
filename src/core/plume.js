@@ -4,9 +4,17 @@ import logger from "../utils/logger.js";
 import { account } from "../../account.js";
 import { API } from "../api/api.js";
 import { RPC } from "./rpc.js";
-import { GOON_ABI, GOON_CONTRACT } from "./goon_token.js";
+import {
+  GOON_ABI,
+  GOON_CONTRACT,
+  GOONUSD_CONTRACT,
+  GOONUSD_IMPL_CONTRACT,
+} from "./goon_token.js";
 import { CHECKIN_IMPL_CONTRACT } from "./check_in.js";
 import { Wallet } from "ethers";
+import { CROCSWAP_ABI, CROCSWAPDEX, GOONTOGOONUSDPOOL } from "./ambient.js";
+import { Config } from "../config/config.js";
+import { ContractTransactionResponse } from "ethers";
 
 export class Plume extends API {
   constructor(acc) {
@@ -196,7 +204,7 @@ Issued At: 2024-07-23T05:42:33.571Z`;
         const tx = {
           to: CHECKIN_IMPL_CONTRACT,
           from: this.wallet.address,
-          nonce,
+          nonce: nonce,
           data: checkInData,
           gas: gas,
           gasPrice: feeData.gasPrice,
@@ -204,6 +212,70 @@ Issued At: 2024-07-23T05:42:33.571Z`;
 
         await this.executeTx(tx);
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async swapAmbient() {
+    try {
+      const swapAmount = 0.00001;
+      await Helper.delay(1000, this.acc, `Try To Swap on Ambient..`, this);
+      const goonContract = await new ethers.Contract(
+        GOON_CONTRACT,
+        GOON_ABI,
+        this.wallet
+      );
+      await Helper.delay(2000, this.acc, `Aprrove spending of GON...`, this);
+      const approveTx = await goonContract.approve(
+        CROCSWAPDEX,
+        ethers.MaxUint256.toString()
+      );
+      await this.approval(approveTx);
+
+      await Helper.delay(
+        2000,
+        this.acc,
+        `Swapping on Ambient - ${swapAmount} GON..`,
+        this
+      );
+      const swapUnit = ethers.parseUnits(
+        swapAmount.toString(),
+        await goonContract.decimals()
+      );
+      const croxswapContract = await new ethers.Contract(
+        CROCSWAPDEX,
+        CROCSWAP_ABI,
+        this.wallet
+      );
+      const swapRate = 900;
+      const minOut = ethers
+        .parseUnits(
+          (swapAmount * swapRate).toString(),
+          await goonContract.decimals()
+        )
+        .toString();
+      const nonce = await this.provider.getTransactionCount(
+        this.wallet.address
+      );
+      /** @type { ContractTransactionResponse } */
+      const swapTx = await croxswapContract.swap(
+        GOONUSD_IMPL_CONTRACT,
+        GOON_CONTRACT,
+        GOONTOGOONUSDPOOL,
+        false,
+        false,
+        swapUnit.toString(),
+        "0",
+        "65537",
+        minOut,
+        "0",
+        {
+          nonce: nonce,
+        }
+      );
+
+      await this.executeTx(swapTx);
     } catch (error) {
       throw error;
     }
@@ -226,7 +298,37 @@ Issued At: 2024-07-23T05:42:33.571Z`;
       await Helper.delay(
         2000,
         this.acc,
-        `Transaction Success, TX Hash: ${txRev.hash}`,
+        `Transaction Success \nhttps://testnet-explorer.plumenetwork.xyz/tx/${txRev.hash}`,
+        this
+      );
+      await this.getBalance(true);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async approval(txRes) {
+    try {
+      await Helper.delay(
+        500,
+        this.acc,
+        `Token Approved - Hash : ${txRes.hash}`,
+        this
+      );
+      logger.info(
+        `APPROVE TX : ${JSON.stringify(Helper.serializeBigInt(txRes))}`
+      );
+      await Helper.delay(
+        500,
+        this.acc,
+        `Waiting Approval Confirmation ...`,
+        this
+      );
+      const txRev = await txRes.wait();
+      logger.info(JSON.stringify(Helper.serializeBigInt(txRev)));
+      await Helper.delay(
+        3000,
+        this.acc,
+        `Transaction Success \nhttps://testnet-explorer.plumenetwork.xyz/tx/${txRev.hash}`,
         this
       );
       await this.getBalance(true);

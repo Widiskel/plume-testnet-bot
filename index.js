@@ -13,8 +13,49 @@ async function operation(acc) {
     await plume.getFaucet("ETH");
     await plume.getFaucet("GOON");
 
+    if (plume.balance.ETH == 0) {
+      await Helper.delay(30000, acc, `Waiting for ETH faucet...`, plume);
+      await plume.getBalance(true);
+
+      if (plume.balance.ETH == 0) {
+        await Helper.delay(
+          3000,
+          acc,
+          `ETH balance still 0, skipping account until next loop`,
+          plume
+        );
+        return;
+      }
+    }
+
     await plume.connectDappPlume();
-    await plume.checkIn();
+    if (plume.balance.ETH != 0) {
+      await plume.checkIn();
+    }
+
+    // if (plume.balance.GOON == 0) {
+    //   await Helper.delay(
+    //     30000,
+    //     acc,
+    //     `Waiting for GOON faucet to be Received...`,
+    //     plume
+    //   );
+    //   await plume.getBalance(true);
+
+    //   if (plume.balance.GOON == 0) {
+    //     await Helper.delay(
+    //       3000,
+    //       acc,
+    //       `GOON balance still 0, skipping account until next loop`,
+    //       plume
+    //     );
+    //     return;
+    //   }
+    // }
+
+    // if (plume.balance.GOON != 0) {
+    //   await plume.swapAmbient();
+    // }
   } catch (error) {
     if (currentError != maxError) {
       currentError += 1;
