@@ -4,7 +4,7 @@ PLUM TESTNET TX bot for adding more tx on chain
 
 ## BOT FEATURE
 
-- Auto Claim Faucet
+- Auto Claim Faucet (if faucet not received for long time, it mean faucet limit reached)
 - Auto Check In
 
 ## PREREQUISITE
@@ -25,9 +25,7 @@ PLUM TESTNET TX bot for adding more tx on chain
 im adding config file for you to configure, open `src config/config.js` and adjust config. Here some configurable variables.
 
 ```js
-sendAmount = 0.0001; //amount to send in sol
 maxErrorCount = 3; //max error retry
-txCount = 30; //Tx Count per Account
 ```
 
 to configure destination address list, open `src config/address_list.js` adjust the list with yours. the bot will pick random destination address from that list to send token or it will send to its own wallet address.
